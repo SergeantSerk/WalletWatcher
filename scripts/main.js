@@ -1,6 +1,10 @@
-const ethereumNode = `https://mainnet.infura.io/v3/${infuraEthereumApiKey}`;
-const web3Provider = new Web3.providers.HttpProvider(ethereumNode);
-const web3 = new Web3(web3Provider);
+// Ethereum
+const ethEndpoint = `https://mainnet.infura.io/v3/${infuraEthereumApiKey}`;
+const ethWeb3Provider = new Web3.providers.HttpProvider(ethEndpoint);
+const ethWeb3 = new Web3(ethWeb3Provider);
+
+// Stellar
+const xlmServer = new StellarSdk.Server('https://horizon.stellar.org');
 
 async function loadTableData() {
     var data = [];
@@ -9,10 +13,17 @@ async function loadTableData() {
         var wallet = wallets[i];
         switch (wallet.coin) {
             case "ETH":
-                var balance = await web3.eth.getBalance(wallet.address)
-                balance = convertToEth(balance);
-                var row = makeRow(wallet, balance);
-                data.push(row);
+                await ethWeb3.eth.getBalance(wallet.address)
+                    .then(wei => convertWeiToEther(wei))
+                    .then(ether => makeRow(wallet, ether))
+                    .then(row => data.push(row))
+                    .catch(error => console.log(error));
+                break;
+            case "XLM":
+                await xlmServer.loadAccount(wallet.address)
+                    .then(account => makeRow(wallet, account.balances[0].balance))
+                    .then(row => data.push(row))
+                    .catch(error => console.log(error));
                 break;
         }
     }
@@ -24,11 +35,11 @@ function makeRow(wallet, balance) {
     var row = {
         coin: wallet.coin,
         address: wallet.address,
-        balance: convertToEth(balance)
+        balance: balance
     };
     return row;
 }
 
-function convertToEth(ether) {
-    return parseFloat(ether) / 1e9;
+function convertWeiToEther(ether) {
+    return parseFloat(ether) / 1e18;
 }

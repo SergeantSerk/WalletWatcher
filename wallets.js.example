@@ -1,0 +1,11 @@
+var wallets =
+    [
+        {
+            "coin": "ETH",
+            "address": "ETH_address_here"
+        },
+        {
+            "coin": "XLM",
+            "address": "XLM_address_here"
+        }
+    ]

@@ -1,0 +1,2 @@
+// Fill this variable with https://infura.io/ API key for Ethereum mainnet
+const infuraEthereumApiKey = 'infuraApiKey';

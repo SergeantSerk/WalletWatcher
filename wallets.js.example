@@ -2,10 +2,12 @@ var wallets =
     [
         {
             "coin": "ETH",
-            "address": "ETH_address_here"
+            "address": "ETH_address_here",
+            "note": "Keystore Wallet"
         },
         {
             "coin": "XLM",
-            "address": "XLM_address_here"
+            "address": "XLM_address_here",
+            "note": null
         }
     ]

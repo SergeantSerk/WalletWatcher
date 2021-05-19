@@ -35,7 +35,8 @@ function makeRow(wallet, balance) {
     var row = {
         coin: wallet.coin,
         address: wallet.address,
-        balance: balance
+        balance: balance,
+        note: wallet.note
     };
     return row;
 }

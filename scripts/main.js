@@ -35,6 +35,9 @@ async function loadTableData() {
                     .then(row => data.push(row))
                     .catch(error => console.log(error));
                 break;
+            default:
+                data.push(makeRow(wallet, null));
+                break;
         }
     }
 

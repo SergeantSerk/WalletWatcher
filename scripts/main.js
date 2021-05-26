@@ -1,3 +1,6 @@
+// Chia
+const xchEndpoint = 'https://api2.chiaexplorer.com/balance';
+
 // Ethereum
 const ethEndpoint = `https://mainnet.infura.io/v3/${infuraEthereumApiKey}`;
 const ethWeb3Provider = new Web3.providers.HttpProvider(ethEndpoint);
@@ -29,6 +32,13 @@ async function loadTableData() {
                     .then(row => data.push(row))
                     .catch(error => console.log(error));
                 break;
+            case "XCH":
+                await fetch(`${xchEndpoint}/${wallet.address}`)
+                    .then(response => response.json())
+                    .then(json => makeRow(wallet, convertPicoToChia(json.netBalance)))
+                    .then(row => data.push(row))
+                    .catch(error => console.log(error));
+                break;
             case "XLM":
                 await xlmServer.loadAccount(wallet.address)
                     .then(account => makeRow(wallet, account.balances[0].balance))
@@ -42,6 +52,7 @@ async function loadTableData() {
     }
 
     $('#walletTable').bootstrapTable({ data: data })
+    document.getElementById('walletTable-spinner').style.display = "none";
 }
 
 function makeRow(wallet, balance) {
@@ -52,6 +63,10 @@ function makeRow(wallet, balance) {
         note: wallet.note
     };
     return row;
+}
+
+function convertPicoToChia(chia) {
+    return parseFloat(chia) / 1e12;
 }
 
 function convertWeiToEther(ether) {

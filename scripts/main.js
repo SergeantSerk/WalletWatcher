@@ -1,6 +1,9 @@
 // Chia
 const xchEndpoint = 'https://api2.chiaexplorer.com/balance';
 
+// Dubaicoin
+const dbixEndpoint = 'https://scan.dbix.info/api/v1/address';
+
 // Ethereum
 const ethEndpoint = `https://mainnet.infura.io/v3/${infuraEthereumApiKey}`;
 const ethWeb3Provider = new Web3.providers.HttpProvider(ethEndpoint);
@@ -18,6 +21,14 @@ async function loadTableData() {
     for (i = 0; i < wallets.length; ++i) {
         var wallet = wallets[i];
         switch (wallet.coin) {
+            case "DBIX":
+                await fetch(`${dbixEndpoint}/${wallet.address}`)
+                    .then(response => response.json())
+                    .then(json => json.info.find(item => item.hash.toLowerCase() === wallet.address.toLowerCase()))
+                    .then(result => makeRow(wallet, result.balance))
+                    .then(row => data.push(row))
+                    .catch(error => console.log(error));
+                break;
             case "ETH":
                 await ethWeb3.eth.getBalance(wallet.address)
                     .then(wei => convertWeiToEther(wei))

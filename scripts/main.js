@@ -9,6 +9,9 @@ const ethEndpoint = `https://mainnet.infura.io/v3/${infuraEthereumApiKey}`;
 const ethWeb3Provider = new Web3.providers.HttpProvider(ethEndpoint);
 const ethWeb3 = new Web3(ethWeb3Provider);
 
+// Helium
+const hntEndpoint = 'https://api.helium.io/v1/accounts'
+
 // Ravencoin
 const rvnEndpoint = 'https://explorer-api.ravenland.org/address';
 
@@ -56,6 +59,14 @@ async function loadTableData() {
                     .then(row => data.push(row))
                     .catch(error => console.log(error));
                 break;
+            case "HNT":
+                await fetch(`${hntEndpoint}/${wallet.address}`)
+                    .then(response => response.json())
+                    .then(json => convertValueToHelium(json.data.balance))
+                    .then(balance => makeRow(wallet, balance))
+                    .then(row => data.push(row))
+                    .catch(error => console.log(error));
+                break;
             default:
                 data.push(makeRow(wallet, null));
                 break;
@@ -74,6 +85,10 @@ function makeRow(wallet, balance) {
         note: wallet.note
     };
     return row;
+}
+
+function convertValueToHelium(helium) {
+    return parseFloat(helium) / 1e8;
 }
 
 function convertPicoToChia(chia) {

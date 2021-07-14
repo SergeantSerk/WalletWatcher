@@ -21,6 +21,12 @@ const rvnEndpoint = 'https://explorer-api.ravenland.org/address';
 // Stellar
 const xlmServer = new StellarSdk.Server('https://horizon.stellar.org');
 
+// Callisto
+const cloEndpoint = 'https://explorer.callisto.network/api';
+
+// Expanse
+const expEndpoint = 'https://explorer.expanse.tech/v1';
+
 function loadTableData() {
     wallets.forEach(processWallet);
 }
@@ -81,6 +87,17 @@ function processWallet(wallet, index) {
                 .then(balance => table.row.add([wallet.coin, wallet.address, balance.toFixed(30), wallet.note]))
                 .then(render => render.draw(false))
                 .catch(error => console.log(error));
+            break;
+        case "CLO":
+            fetch(`${cloEndpoint}?module=account&action=balance&address=${wallet.address}`)
+                .then(response => response.json())
+                .then(json => convertDenominationToValue(1e18, json.result))
+                .then(balance => table.row.add([wallet.coin, wallet.address, balance, wallet.note]))
+                .then(render => render.draw(false))
+                .catch(error => console.log(error));
+            break;
+        case "EXP":
+            table.row.add([wallet.coin, wallet.address, `<a href="https://explorer.expanse.tech/addr/${wallet.address}">Balance</a>`, wallet.note]).draw(false);
             break;
         default:
             table.row.add([wallet.coin, wallet.address, "-", wallet.note]).draw(false);

@@ -25,7 +25,7 @@ const xlmServer = new StellarSdk.Server('https://horizon.stellar.org');
 const cloEndpoint = 'https://explorer.callisto.network/api';
 
 // Expanse
-const expEndpoint = 'https://explorer.expanse.tech/v1';
+const expEndpoint = 'https://expanscout.com/api';
 
 function loadTableData() {
     wallets.forEach(processWallet);
@@ -97,7 +97,13 @@ function processWallet(wallet, index) {
                 .catch(error => console.log(error));
             break;
         case "EXP":
-            table.row.add([wallet.coin, wallet.address, `<a href="https://explorer.expanse.tech/addr/${wallet.address}">Balance</a>`, wallet.note]).draw(false);
+            fetch(`${expEndpoint}/?module=account&action=eth_get_balance&address=${wallet.address}`)
+                .then(response => response.json())
+                .then(json => parseInt(json.result))
+                .then(balanceRaw => convertDenominationToValue(1e18, balanceRaw))
+                .then(balance => row = table.row.add([wallet.coin, wallet.address, balance, wallet.note]))
+                .then(render => render.draw(false))
+                .catch(error => console.log(error))
             break;
         default:
             table.row.add([wallet.coin, wallet.address, "-", wallet.note]).draw(false);

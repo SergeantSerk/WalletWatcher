@@ -9,6 +9,9 @@ const ethEndpoint = `https://mainnet.infura.io/v3/${infuraEthereumApiKey}`;
 const ethWeb3Provider = new Web3.providers.HttpProvider(ethEndpoint);
 const ethWeb3 = new Web3(ethWeb3Provider);
 
+// Ethereum Classic
+const etcEndpoint = 'https://blockscout.com/etc/mainnet/api';
+
 // Helium
 const hntEndpoint = 'https://api.helium.io/v1/accounts'
 
@@ -98,6 +101,15 @@ function processWallet(wallet, index) {
             break;
         case "EXP":
             fetch(`${expEndpoint}/?module=account&action=eth_get_balance&address=${wallet.address}`)
+                .then(response => response.json())
+                .then(json => parseInt(json.result))
+                .then(balanceRaw => convertDenominationToValue(1e18, balanceRaw))
+                .then(balance => row = table.row.add([wallet.coin, wallet.address, balance, wallet.note]))
+                .then(render => render.draw(false))
+                .catch(error => console.log(error))
+            break;
+        case "ETC":
+            fetch(`${etcEndpoint}?module=account&action=balance&address=${wallet.address}`)
                 .then(response => response.json())
                 .then(json => parseInt(json.result))
                 .then(balanceRaw => convertDenominationToValue(1e18, balanceRaw))

@@ -5,7 +5,7 @@ const xchEndpoint = 'https://api2.chiaexplorer.com/balance';
 const dbixEndpoint = 'https://scan.dbix.info/api/v1/address';
 
 // Ethereum
-const ethEndpoint = `https://nodes.mewapi.io/rpc/eth`;
+const ethEndpoint = `https://cloudflare-eth.com/`;
 const ethWeb3 = new Web3(new Web3.providers.HttpProvider(ethEndpoint));
 
 // Ethereum Classic

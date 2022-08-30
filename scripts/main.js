@@ -69,7 +69,9 @@ function processWallet(wallet, index) {
             break;
         case "XLM":
             xlmServer.loadAccount(wallet.address)
-                .then(account => account.balances[0].balance)
+                .then(account => account.balances)
+                .then(balance_infos => balance_infos.find((value) => value.asset_type === "native"))
+                .then(balance_info => balance_info.balance)
                 .then(balance => table.row.add([wallet.coin, wallet.address, balance, wallet.note]))
                 .then(render => render.draw(false))
                 .catch(error => console.log(error));
